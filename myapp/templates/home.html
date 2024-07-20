@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Options Simulator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .form-control {
+            background-color: #000000;
+            color: #ffffff;
+            border: 1px solid #555555;
+        }
+        .btn-primary {
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #333333;
+        }
+        .heatmap-container {
+            background-color: #222222;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .heatmap-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        .metrics-container {
+            background-color: #222222;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .metrics-container p {
+            margin: 0;
+            padding: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Options Simulation Tool</h1>
+        <div class="row">
+            <div class="col-md-12">
+                <form id="heatmap-form" method="post" class="bg-dark p-4 rounded">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary btn-block">Run Simulation</button>
+                </form>
+                {% if form.errors %}
+                    <div class="alert alert-danger mt-3">
+                        {{ form.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heatmap-container">
+                    <h2 class="text-center">Call Option Prices</h2>
+                    <img id="call-heatmap" src="" alt="Call Option Prices Heatmap">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="metrics-container">
+                    <h2 class="text-center">Metrics</h2>
+                    <p id="profitable-simulations"></p>
+                    <p id="avg-returns"></p>
+                    <p id="count-above-threshold"></p>
+                    <p id="put-below-threshold"></p>
+                    <p id="call_expire_worthless"></p>
+                    <p id='put_expire_worthless'></p>
+                    <p id='call_average_returns'></p>
+                    <p id='put_average_returns'></p>
+                    {% comment %} <p id='Optimal_stopping_average_returns_calls'></p>
+                    <p id='Optimal_stopping_average_returns_puts'></p> {% endcomment %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#heatmap-form').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: '',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.heatmap_image) {
+                            $('#call-heatmap').attr('src', 'data:image/png;base64,' + response.heatmap_image);
+                        }
+                        if (response.metrics) {
+                            $('#profitable-simulations').text('% of sims where stock Increases in Value: ' + response.metrics.profitable_simulations + '%');
+                            $('#avg-returns').text('Average stock returns: ' + response.metrics.avg_returns + '%');
+                            $('#count-above-threshold').text('% Call profitable on expiration: ' + response.metrics.count_above_threshold + '%');
+                            $('#put-below-threshold').text('% Put profitable on expiration: ' + response.metrics.put_below_threshold + '%');
+                            $('#call_expire_worthless').text('% Calls expire worthless: ' + response.metrics.call_expire_worthless + '%');
+                            $('#put_expire_worthless').text('% Puts expire worthless: ' + response.metrics.put_expire_worthless + '%');
+                            $('#call_average_returns').text('% Average Call profit (per contract): $' + response.metrics.call_average_returns);
+                            $('#put_average_returns').text('% Average Put profit (per contract): $' + response.metrics.put_average_returns);
+                            {% comment %} $('#Optimal_stopping_average_returns_calls').text('% Average Put profit with optimal stopping (per contract): $' + response.metrics.Optimal_stopping_average_returns_calls);
+                            $('#Optimal_stopping_average_returns_puts').text('% Average Put profit with optimal stopping (per contract): $' + response.metrics.Optimal_stopping_average_returns_puts); {% endcomment %}
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
