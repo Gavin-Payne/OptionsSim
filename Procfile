@@ -1,1 +1,1 @@
-web: gunicorn myproject.wsgi
+web: waitress-serve --listen=0.0.0.0:8000 myproject.wsgi:application
