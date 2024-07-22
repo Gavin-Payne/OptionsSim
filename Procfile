@@ -1,1 +1,1 @@
-web: gunicorn options-sim.wsgi
+web: gunicorn myproject.wsgi
