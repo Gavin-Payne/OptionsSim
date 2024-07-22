@@ -26,7 +26,12 @@ SECRET_KEY = 'django-insecure-bj^33)p3ph8js+p$*61dib_14)kygzfioy0!-t%*9=55ouoyy$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['options-sim.onrender.com', "127.0.0.1"]
+ALLOWED_HOSTS = ['options-sim.onrender.com', 'localhost', '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://options-sim.onrender.com',
+    'http://options-sim.onrender.com'
+]
 
 
 # Application definition
