@@ -48,6 +48,21 @@
             margin: 0;
             padding: 5px 0;
         }
+        .spinner {
+            display: none;
+            margin: 0 auto;
+            border: 10px solid rgba(0, 0, 0, 1);
+            width: 81px;
+            height: 81px;
+            border-radius: 100%;
+            border-left-color: #09f;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -59,6 +74,7 @@
                     {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-primary btn-block">Run Simulation</button>
+                    <div class="spinner" id="loading-spinner"></div> <!-- Add the spinner element here -->
                 </form>
                 {% if form.errors %}
                     <div class="alert alert-danger mt-3">
@@ -98,11 +114,13 @@
         $(document).ready(function() {
             $('#heatmap-form').on('submit', function(event) {
                 event.preventDefault();
+                $('#loading-spinner').show();
                 $.ajax({
                     url: '',
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function(response) {
+                        $('#loading-spinner').hide();
                         if (response.heatmap_image) {
                             $('#call-heatmap').attr('src', 'data:image/png;base64,' + response.heatmap_image);
                         }
@@ -118,6 +136,9 @@
                             {% comment %} $('#Optimal_stopping_average_returns_calls').text('% Average Put profit with optimal stopping (per contract): $' + response.metrics.Optimal_stopping_average_returns_calls);
                             $('#Optimal_stopping_average_returns_puts').text('% Average Put profit with optimal stopping (per contract): $' + response.metrics.Optimal_stopping_average_returns_puts); {% endcomment %}
                         }
+                    },
+                    error: function() {
+                        $('#loading-spinner').hide();
                     }
                 });
             });
@@ -125,3 +146,4 @@
     </script>
 </body>
 </html>
+
