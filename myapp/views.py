@@ -170,16 +170,15 @@ def generate_Outputs(stock_price, strike_price, time, risk_free_interest_rate, v
     Options_plot.legend(loc='upper left', labelcolor="w", facecolor='grey')
     
 
-    # Adjust layout
     plt.tight_layout()
 
-    # Save figure to a buffer
+    # Save plot
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
     image_png = buffer.getvalue()
     buffer.close()
-    plt.clf()  # Clear the current figure
+    plt.clf()  # Clear
     
     final_prices = Simulations[-1]
     profitable_simulations = np.sum(final_prices >= stock_price) / n_simulations
