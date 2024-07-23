@@ -74,7 +74,7 @@
                     {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-primary btn-block">Run Simulation</button>
-                    <div class="spinner" id="loading-spinner"></div> <!-- Add the spinner element here -->
+                    <div class="spinner" id="loading-spinner"></div>
                 </form>
                 {% if form.errors %}
                     <div class="alert alert-danger mt-3">
