@@ -14,3 +14,4 @@ jsonschema==4.23.0
 jsonschema-specifications==2023.12.1
 waitress==3.0.0
 psycopg2-binary==2.9.6
+python-decouple==3.8
